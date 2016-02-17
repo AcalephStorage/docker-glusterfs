@@ -1,0 +1,51 @@
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: glusterfs-daemonset
+  namespace: acaleph
+spec:
+  selector:
+    app: glusterfs
+  template:
+    metadata:
+      name: glusterfs
+      namespace: acaleph
+      labels:
+        app: glusterfs
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        node: storage
+      containers:
+        - name: glusterfs
+          image: glusterfs_test
+          imagePullPolicy: IfNotPresent
+          restartPolicy: Always
+          env:
+            - name: K8S_URL
+              value: https://10.0.0.50
+          volumeMounts:
+            - name: glusterfs-etc
+              mountPath: "/etc/glusterfs"
+            - name: glusterfs-logs
+              mountPath: "/var/log/glusterfs"
+            - name: glusterfs-config
+              mountPath: "/var/lib/glusterd"
+            - name: glusterfs-devtree
+              mountPath: "/dev"
+          securityContext:
+            privileged: true
+      volumes:
+        - name: glusterfs-etc
+          hostPath:
+            path: "/etc/glusterfs"
+        - name: glusterfs-logs
+          hostPath:
+            path: "/var/log/glusterfs"
+        - name: glusterfs-config
+          hostPath:
+            path: "/var/lib/glusterd"
+        - name: glusterfs-devtree
+          hostPath:
+            path: "/dev"
