@@ -54,19 +54,8 @@ function configure_brick {
 
 }
 
-function get_peer_addresses {
-  local bearer=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-  IP_LIST=($( \
-      curl -s --cacert \
-        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
-        -H "Authorization: Bearer $bearer" ${K8S_URL}/api/v1/nodes?labelSelector="node=storage" \
-        | awk '/LegacyHostIP/{getline; print $2}' \
-        | sed 's/"//g' \
-    ))
-}
-
 function get_own_ip {
-  get_peer_addresses
+  get_peer_addresses $K8S_URL
 
   local found=0
   for peer_ip in "${IP_LIST[@]}"; do

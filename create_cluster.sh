@@ -9,17 +9,6 @@ if [ -e /build/utils.sh ]; then
   . /build/utils.sh
 fi
 
-function get_peer_addresses {
-  local bearer=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-  IP_LIST=($( \
-      curl -s --cacert \
-        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
-        -H "Authorization: Bearer $bearer" ${K8S_URL}/api/v1/nodes?labelSelector="node=storage" \
-        | awk '/LegacyHostIP/{getline; print $2}' \
-        | sed 's/"//g' \
-    ))
-}
-
 function detect_glusterd_nodes {
   local elapsed=0
 
@@ -72,7 +61,7 @@ function create_cluster {
   fi
 }
 
-get_peer_addresses
+get_peer_addresses $K8S_URL
 NUM_PEERS=${#IP_LIST[@]}
 
 detect_glusterd_nodes

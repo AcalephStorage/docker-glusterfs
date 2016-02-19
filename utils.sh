@@ -1,5 +1,17 @@
 #!/bin/bash
 
+function get_peer_addresses {
+  local bearer=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+  local k8s_url=$1
+  IP_LIST=($( \
+      curl -s --cacert \
+        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+        -H "Authorization: Bearer $bearer" ${k8s_url}/api/v1/nodes?labelSelector="node=storage" \
+        | awk '/LegacyHostIP/{getline; print $2}' \
+        | sed 's/"//g' \
+    ))
+}
+
 function log_msg {
   #
   # Write msgs to stdout, making them available to "docker logs"

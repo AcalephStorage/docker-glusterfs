@@ -6,9 +6,9 @@ function prep_directories {
         /var/lib/glusterd \
         /var/log/glusterfs
 
-  chcon -Rt svirt_sandbox_file_t /etc/glusterfs
-  chcon -Rt svirt_sandbox_file_t /var/lib/glusterd
-  chcon -Rt svirt_sandbox_file_t /var/log/glusterfs
+  #chcon -Rt svirt_sandbox_file_t /etc/glusterfs
+  #chcon -Rt svirt_sandbox_file_t /var/lib/glusterd
+  #chcon -Rt svirt_sandbox_file_t /var/log/glusterfs
 }
 
 function disk_used {
